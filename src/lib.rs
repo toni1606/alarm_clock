@@ -5,7 +5,7 @@ use std::fs::File;
 use chrono::prelude::*;
 
 #[derive(Debug, Eq, PartialEq)]
-enum TimeZone {
+enum Period {
 	Am,
 	Pm
 }
@@ -14,7 +14,12 @@ enum TimeZone {
 pub struct Config {
 	hour: u8,
 	minute: u8,
-	time_zone: TimeZone
+	time_zone: Period
+}
+
+struct Time {
+	hour: u8,
+	minute: u8
 }
 
 impl Config {
@@ -23,7 +28,7 @@ impl Config {
 
 		let mut hour_flag: Option<String> = None;
 		let mut minute_flag: Option<String> = None;
-		let mut is_pm: TimeZone = TimeZone::Am;
+		let mut is_pm: Period = Period::Am;
 		
 		loop {
 			match opts.next().transpose()? {
@@ -32,7 +37,7 @@ impl Config {
 					match opt {
 						Opt('h', Some(hour)) => hour_flag = Some(hour),
 						Opt('m', Some(minute)) => minute_flag = Some(minute),
-						Opt('p', None) => is_pm = TimeZone::Pm,
+						Opt('p', None) => is_pm = Period::Pm,
 						_ => unreachable!()
 					}
 				}
@@ -63,11 +68,43 @@ impl Config {
 	}
 }
 
+impl Time {
+	pub fn new(hour: u8, minute: u8) -> Time {
+		Time {hour, minute}
+	}
+
+	pub fn from_config(config: &Config) -> Time {
+		let mut _24_day_format: u8 = config.hour;
+		if config.time_zone == Period::Pm {
+			_24_day_format = config.hour + 12;
+		}
+
+		Time {
+			hour: _24_day_format,
+			minute: config.minute
+		}
+	}
+}
+
 pub fn run(config: Config, filename: &str) -> Result<(), Box<dyn std::error::Error>>{
+	let time = Time::from_config(&config);
+
 	let random_url_index = rand::thread_rng().gen_range(1..(get_lines(filename)? + 1));	
 	
 	// TODO: merru me kohen
+	let local_time = Local::now();
+
+	// let dt = DateTime::<Utc>::from_utc(NaiveDateTime::from_timestamp(61, 0), Utc);
+	// let to_be_time = Utc.ydm(
+	// 						local_time.year(),
+	// 						local_time.month(),
+	// 						local_time.day())
+	// 						.add_hms(time.hour, time.minute, 0);
 	
+	// println!("{:?}", to_be_time);
+							// let time_to_sleep = to_be_time - local_time;
+
+	// std::thread::sleep(time_to_sleep);
 	
 	Ok(())
 }
