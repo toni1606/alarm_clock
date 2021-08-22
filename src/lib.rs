@@ -2,6 +2,7 @@ use getopt::Opt;
 use rand::Rng;
 use std::io::{BufRead, BufReader};
 use std::fs::File;
+use chrono::prelude::*;
 
 #[derive(Debug, Eq, PartialEq)]
 enum TimeZone {
@@ -65,7 +66,9 @@ impl Config {
 pub fn run(config: Config, filename: &str) -> Result<(), Box<dyn std::error::Error>>{
 	let random_url_index = rand::thread_rng().gen_range(1..(get_lines(filename)? + 1));	
 	
-	println!("{}", random_url_index);
+	// TODO: merru me kohen
+	
+	
 	Ok(())
 }
 
