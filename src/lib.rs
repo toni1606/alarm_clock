@@ -1,4 +1,7 @@
 use getopt::Opt;
+use rand::Rng;
+use std::io::{BufRead, BufReader};
+use std::fs::File;
 
 #[derive(Debug, Eq, PartialEq)]
 enum TimeZone {
@@ -59,5 +62,20 @@ impl Config {
 	}
 }
 
-pub fn run() {
+pub fn run() -> Result<(), Box<dyn std::error::Error>>{
+	let random_url_index = rand::thread_rng().gen_range(1..(get_lines("data/url.txt")? + 1));	
+	
+	println!("{}", random_url_index);
+	Ok(())
+}
+
+fn get_lines(filename: &str) -> Result<u32, Box<dyn std::error::Error>> {
+	let reader = BufReader::new(File::open(filename)?);
+	let mut count = 0;
+	
+	for _ in reader.lines() {
+		count += 1;
+	}
+
+	Ok(count)
 }

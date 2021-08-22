@@ -1,4 +1,4 @@
-use alarm_clock::Config;
+use alarm_clock::{Config, run};
 
 fn main() {
 	let config = Config::new(&std::env::args().collect::<Vec<String>>()).unwrap_or_else(|err| {
@@ -7,4 +7,5 @@ fn main() {
 	});
 
 	println!("{:?}", config);
+	run();
 }
