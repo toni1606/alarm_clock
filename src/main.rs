@@ -7,5 +7,8 @@ fn main() {
 	});
 
 	println!("{:?}", config);
-	run();
+	run(config, "data/url.txt").unwrap_or_else(|err| {
+		eprintln!("An error ocurred during the execution of the program: {}", err);
+		std::process::exit(2);
+	});
 }

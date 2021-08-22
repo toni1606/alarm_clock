@@ -62,8 +62,8 @@ impl Config {
 	}
 }
 
-pub fn run() -> Result<(), Box<dyn std::error::Error>>{
-	let random_url_index = rand::thread_rng().gen_range(1..(get_lines("data/url.txt")? + 1));	
+pub fn run(config: Config, filename: &str) -> Result<(), Box<dyn std::error::Error>>{
+	let random_url_index = rand::thread_rng().gen_range(1..(get_lines(filename)? + 1));	
 	
 	println!("{}", random_url_index);
 	Ok(())
