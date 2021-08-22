@@ -6,56 +6,58 @@ enum TimeZone {
 	Pm
 }
 
-pub fn run() {
-	parser();
+#[derive(Debug)]
+pub struct Config {
+	hour: u8,
+	minute: u8,
+	time_zone: TimeZone
 }
 
-fn parser() -> Result<(), Box<dyn std::error::Error>> {
-	let args: Vec<String> = std::env::args().collect();
-	let mut opts = getopt::Parser::new(&args, "h:m:p:");
+impl Config {
+	pub fn new(args: &[String]) -> Result<Config, Box<dyn std::error::Error>> {
+		let mut opts = getopt::Parser::new(args, "h:m:p");
 
-	let mut hour_flag: Option<String> = None;
-	let mut minute_flag: Option<String> = None;
-	let mut is_pm: Option<TimeZone> = None;
-	
-	loop {
-		match opts.next().transpose()? {
-			None => break,
-			Some(opt) => {
-				match opt {
-					Opt('h', Some(hour)) => hour_flag = Some(hour),
-					Opt('m', Some(minute)) => minute_flag = Some(minute),
-					Opt('p', Some(pm)) => {
-						if &pm == "true" {
-							is_pm = Some(TimeZone::Pm);
-						} else {
-							is_pm = Some(TimeZone::Am);
-						}
-					},
-					_ => unreachable!()
+		let mut hour_flag: Option<String> = None;
+		let mut minute_flag: Option<String> = None;
+		let mut is_pm: TimeZone = TimeZone::Am;
+		
+		loop {
+			match opts.next().transpose()? {
+				None => break,
+				Some(opt) => {
+					match opt {
+						Opt('h', Some(hour)) => hour_flag = Some(hour),
+						Opt('m', Some(minute)) => minute_flag = Some(minute),
+						Opt('p', None) => is_pm = TimeZone::Pm,
+						_ => unreachable!()
+					}
 				}
 			}
 		}
+
+		let hour_flag: u8 = match hour_flag {
+			None => {
+				eprintln!("No hour value given, reverting to default value (0)");
+				0
+			},
+			Some(h) => h.parse()?
+		};
+
+		let minute_flag: u8 = match minute_flag {
+			None => {
+				eprintln!("No minute value given, reverting to default value (0)");
+				0
+			},
+			Some(m) => m.parse()?
+		};
+
+		Ok(Config {
+			hour: hour_flag, 
+			minute: minute_flag,
+			time_zone: is_pm
+		})
 	}
+}
 
-	let hour_flag: u8 = match hour_flag {
-		None => 0,
-		Some(h) => h.parse()?
-	};
-
-	let minute_flag: u8 = match minute_flag {
-		None => 0,
-		Some(m) => m.parse()?
-	};
-
-	let is_pm: TimeZone = match is_pm {
-		Some(TimeZone::Am) => TimeZone::Am,
-		_ => TimeZone::Pm
-	};
-
-	let config = (hour_flag, minute_flag, is_pm);
-
-	println!("{:?}", config);
-
-	Ok(())
+pub fn run() {
 }
