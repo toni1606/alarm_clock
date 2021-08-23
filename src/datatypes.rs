@@ -13,13 +13,13 @@ pub struct Config {
 	time_zone: Period
 }
 
-struct Time {
+pub struct Time {
 	hour: u32,
 	minute: u32
 }
 
 #[derive(Debug)]
-struct TimeError {
+pub struct TimeError {
 	details: String
 }
 
@@ -96,6 +96,14 @@ impl Time {
 			hour: _24_day_format,
 			minute: config.minute
 		}
+	}
+
+	pub fn get_hour(&self) -> u32 {
+		self.hour
+	}
+
+	pub fn get_minute(&self) -> u32 {
+		self.minute
 	}
 }
 
