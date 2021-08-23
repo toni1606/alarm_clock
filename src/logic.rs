@@ -4,8 +4,8 @@ use std::fs::File;
 use chrono::prelude::{Local, Datelike, TimeZone};
 use webbrowser::open;
 
-use crate::datatypes::config::Config;
-use crate::datatypes::time::Time;
+use crate::datatypes::Config;
+use crate::datatypes::Time;
 
 pub fn run(config: Config, filename: &str) -> Result<(), Box<dyn std::error::Error>>{
 	let time = Time::from_config(&config);
