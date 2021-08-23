@@ -1,4 +1,6 @@
 use getopt::Opt;
+use crate::datatypes::period::Period;
+use crate::datatypes::time_error::TimeError;
 
 #[derive(Debug)]
 pub struct Config {
@@ -62,5 +64,17 @@ impl Config {
 			minute: minute_flag,
 			time_zone: is_pm
 		})
+	}
+
+	pub fn get_hour(&self) -> u32 {
+		self.hour
+	}
+
+	pub fn get_minute(&self) -> u32 {
+		self.minute
+	}
+
+	pub fn get_time_zone(&self) -> Period {
+		self.time_zone
 	}
 }
