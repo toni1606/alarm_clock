@@ -89,7 +89,7 @@ impl Time {
 pub fn run(config: Config, filename: &str) -> Result<(), Box<dyn std::error::Error>>{
 	let time = Time::from_config(&config);
 
-	let random_url_index = rand::thread_rng().gen_range(1..(get_lines(filename)? + 1));	
+	let random_url_index = rand::thread_rng().gen_range(1..(get_line_count(filename)? + 1));	
 	
 	let local_time = Local::now();
 	let execution_time = Local.ymd(
@@ -103,7 +103,7 @@ pub fn run(config: Config, filename: &str) -> Result<(), Box<dyn std::error::Err
 	Ok(())
 }
 
-fn get_lines(filename: &str) -> Result<u32, Box<dyn std::error::Error>> {
+fn get_line_count(filename: &str) -> Result<u32, Box<dyn std::error::Error>> {
 	let reader = BufReader::new(File::open(filename)?);
 	let mut count = 0;
 	
