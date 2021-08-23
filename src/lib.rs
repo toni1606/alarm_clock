@@ -160,6 +160,6 @@ fn get_line_contents(filename: &str, index: usize) -> Result<String, Box<dyn std
 			return Ok(line?)
 		}
 	}
-	
+
 	unreachable!();
 }
