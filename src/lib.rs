@@ -2,7 +2,7 @@ use getopt::Opt;
 use rand::Rng;
 use std::io::{BufRead, BufReader};
 use std::fs::File;
-use chrono::prelude::*;
+use chrono::prelude::{Local, Datelike, TimeZone};
 
 #[derive(Debug, Eq, PartialEq)]
 enum Period {
@@ -93,9 +93,9 @@ pub fn run(config: Config, filename: &str) -> Result<(), Box<dyn std::error::Err
 	
 	let local_time = Local::now();
 	let execution_time = Local.ymd(
-							local_time.year(),
-							local_time.month(),
-							local_time.day())
+								local_time.year(),
+								local_time.month(),
+								local_time.day())
 							.and_hms(time.hour, time.minute, 0);
 
 	std::thread::sleep((execution_time - local_time).to_std()?);
