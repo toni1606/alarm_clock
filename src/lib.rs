@@ -12,14 +12,14 @@ enum Period {
 
 #[derive(Debug)]
 pub struct Config {
-	hour: u8,
-	minute: u8,
+	hour: u32,
+	minute: u32,
 	time_zone: Period
 }
 
 struct Time {
-	hour: u8,
-	minute: u8
+	hour: u32,
+	minute: u32
 }
 
 impl Config {
@@ -44,7 +44,7 @@ impl Config {
 			}
 		}
 
-		let hour_flag: u8 = match hour_flag {
+		let hour_flag: u32 = match hour_flag {
 			None => {
 				eprintln!("No hour value given, reverting to default value (0)");
 				0
@@ -52,7 +52,7 @@ impl Config {
 			Some(h) => h.parse()?
 		};
 
-		let minute_flag: u8 = match minute_flag {
+		let minute_flag: u32 = match minute_flag {
 			None => {
 				eprintln!("No minute value given, reverting to default value (0)");
 				0
@@ -69,12 +69,12 @@ impl Config {
 }
 
 impl Time {
-	pub fn new(hour: u8, minute: u8) -> Time {
+	pub fn new(hour: u32, minute: u32) -> Time {
 		Time {hour, minute}
 	}
 
 	pub fn from_config(config: &Config) -> Time {
-		let mut _24_day_format: u8 = config.hour;
+		let mut _24_day_format: u32 = config.hour;
 		if config.time_zone == Period::Pm {
 			_24_day_format = config.hour + 12;
 		}
@@ -91,20 +91,14 @@ pub fn run(config: Config, filename: &str) -> Result<(), Box<dyn std::error::Err
 
 	let random_url_index = rand::thread_rng().gen_range(1..(get_lines(filename)? + 1));	
 	
-	// TODO: merru me kohen
 	let local_time = Local::now();
+	let execution_time = Local.ymd(
+							local_time.year(),
+							local_time.month(),
+							local_time.day())
+							.and_hms(time.hour, time.minute, 0);
 
-	// let dt = DateTime::<Utc>::from_utc(NaiveDateTime::from_timestamp(61, 0), Utc);
-	// let to_be_time = Utc.ydm(
-	// 						local_time.year(),
-	// 						local_time.month(),
-	// 						local_time.day())
-	// 						.add_hms(time.hour, time.minute, 0);
-	
-	// println!("{:?}", to_be_time);
-							// let time_to_sleep = to_be_time - local_time;
-
-	// std::thread::sleep(time_to_sleep);
+	std::thread::sleep((execution_time - local_time).to_std()?);
 	
 	Ok(())
 }
