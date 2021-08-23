@@ -3,6 +3,7 @@ use rand::Rng;
 use std::io::{BufRead, BufReader};
 use std::fs::File;
 use chrono::prelude::{Local, Datelike, TimeZone};
+use webbrowser::open;
 
 #[derive(Debug, Eq, PartialEq)]
 enum Period {
@@ -135,10 +136,12 @@ pub fn run(config: Config, filename: &str) -> Result<(), Box<dyn std::error::Err
 
 	std::thread::sleep((execution_time - local_time).to_std()?);
 	
+
+	open(&get_line_contents(filename, random_url_index)?)?;
 	Ok(())
 }
 
-fn get_line_count(filename: &str) -> Result<u32, Box<dyn std::error::Error>> {
+fn get_line_count(filename: &str) -> Result<usize, Box<dyn std::error::Error>> {
 	let reader = BufReader::new(File::open(filename)?);
 	let mut count = 0;
 	
@@ -147,4 +150,16 @@ fn get_line_count(filename: &str) -> Result<u32, Box<dyn std::error::Error>> {
 	}
 
 	Ok(count)
+}
+
+fn get_line_contents(filename: &str, index: usize) -> Result<String, Box<dyn std::error::Error>> {
+	let reader = BufReader::new(File::open(filename)?);
+
+	for (i, line) in reader.lines().enumerate() {
+		if i == index {
+			return Ok(line?)
+		}
+	}
+	
+	unreachable!();
 }
