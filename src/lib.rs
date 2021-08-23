@@ -22,6 +22,11 @@ struct Time {
 	minute: u32
 }
 
+#[derive(Debug)]
+struct TimeError {
+	details: String
+}
+
 impl Config {
 	pub fn new(args: &[String]) -> Result<Config, Box<dyn std::error::Error>> {
 		let mut opts = getopt::Parser::new(args, "h:m:p");
@@ -49,7 +54,13 @@ impl Config {
 				eprintln!("No hour value given, reverting to default value (0)");
 				0
 			},
-			Some(h) => h.parse()?
+			Some(h) => {
+				let tem = h.parse()?;
+				if tem >= 24 {
+					return Err(Box::new(TimeError::new("Hour was greater or equal to 24")));
+				}
+				tem
+			}
 		};
 
 		let minute_flag: u32 = match minute_flag {
@@ -57,7 +68,13 @@ impl Config {
 				eprintln!("No minute value given, reverting to default value (0)");
 				0
 			},
-			Some(m) => m.parse()?
+			Some(m) => {
+				let tem = m.parse()?;
+				if tem >= 60 {
+					return Err(Box::new(TimeError::new("Minute was greater or equal to 60")));
+				}
+				tem
+			}
 		};
 
 		Ok(Config {
@@ -83,6 +100,24 @@ impl Time {
 			hour: _24_day_format,
 			minute: config.minute
 		}
+	}
+}
+
+impl TimeError {
+	pub fn new(s: &str) -> TimeError {
+		TimeError {details: String::from(s)}
+	}
+}
+
+impl std::fmt::Display for TimeError {
+	fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+		write!(f, "{}", self.details)
+	}
+}
+
+impl std::error::Error for TimeError {
+	fn description(&self) -> &str {
+		&self.details
 	}
 }
 
